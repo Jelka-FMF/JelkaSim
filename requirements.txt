@@ -1,0 +1,6 @@
+build
+twine
+ruff
+pyright
+numpy
+pygame
