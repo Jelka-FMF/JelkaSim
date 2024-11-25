@@ -1,9 +1,9 @@
 import sys
 
-print("Version:", sys.version, file=sys.stderr)
-
 import time
 from jelka_validator.datawriter import DataWriter
+
+print("Version:", sys.version, file=sys.stderr)
 
 lc = 500
 n = 5400

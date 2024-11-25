@@ -4,3 +4,4 @@ ruff
 pyright
 numpy
 pygame
+jelka-validator
