@@ -14,7 +14,7 @@ def random_tree(n=500, origin=(0, 0, 0), height=200, max_width=120, min_width=60
             yield (x + origin[0], y + origin[1], origin[2] + h)
 
 
-def get_led_positions(file: "str | None" = None) -> "dict[int, int]":
+def get_led_positions(file: "str | None" = None) -> "dict[int, tuple[float, float, float]]":
     if file is None:
         return {i: pos for i, pos in enumerate(random_tree())}
     positions_cm = {}
