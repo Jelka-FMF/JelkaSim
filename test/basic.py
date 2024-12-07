@@ -5,7 +5,7 @@ from jelka_validator.datawriter import DataWriter
 
 print("Version:", sys.version, file=sys.stderr)
 
-lc = 500
+lc = 300
 n = 5400
 ds = DataWriter(led_count=lc, fps=60)
 t = time.time()
