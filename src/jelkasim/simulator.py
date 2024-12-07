@@ -15,19 +15,6 @@ def rotation(phi, tau):
     return yz @ xy
 
 
-def random_tree(n=300, origin=(0, 0, 0), height=200, max_width=120, min_width=60):
-    count = 0
-    while count < n:
-        x = random.uniform(-max_width, max_width)
-        y = random.uniform(-max_width, max_width)
-        h = random.uniform(0, height)
-        max_w = (height - h) / height * max_width
-        min_w = max(max_w - max_width + min_width, 0)
-        if min_w**2 <= x**2 + y**2 <= max_w**2:
-            count += 1
-            yield (x + origin[0], y + origin[1], origin[2] + h)
-
-
 def draw_lucka(pygame, lucka, screen, size, color, scale):
     w, h = pygame.display.get_surface().get_size()
     pygame.draw.circle(screen, color, (w * lucka[0] * scale + w // 2, (-w * lucka[1] * scale + h // 2)), size + 3)
@@ -44,14 +31,11 @@ def draw_line(pygame, p1, p2, screen, color, scale):
 
 
 class Simulation:
-    def __init__(self, smreka=None) -> None:
+    def __init__(self, smreka) -> None:
         self.running = True
         self.phi, self.tau = 0, 0
 
-        if smreka is None:
-            self.smreka = {i: pos for i, pos in enumerate(random_tree())}
-        else:
-            self.smreka = smreka.copy()
+        self.smreka = smreka.copy()
         self.points = {i: array([[p[0]], [p[1]], [p[2]]]) for i, p in self.smreka.items()}
         self.colors = {i: (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for i in self.smreka}
 
