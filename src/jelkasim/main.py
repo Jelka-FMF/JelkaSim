@@ -1,5 +1,5 @@
 from .simulator import Simulation
-from .info_parser import get_led_positions
+from .info_parser import get_positions
 from .read_non_blocking import NonBlockingBytesReader
 
 from subprocess import Popen, PIPE
@@ -22,7 +22,7 @@ parser.add_argument(
 
 
 def main(header_wait: float = 0.5):
-    print(f"You are executing jelkasim from '{os.getcwd()}' using python '{sys.executable}'")
+    print(f"You are executing JelkaSim from '{os.getcwd()}' using Python '{sys.executable}'.")
     args = parser.parse_args()
 
     cmd = []
@@ -40,24 +40,28 @@ def main(header_wait: float = 0.5):
     if cmd == []:
         raise ValueError("You must provide a target program. (Wait for the next update.)")
 
-    if args.positions is not None:
-        try:
-            positions = get_led_positions(args.positions)
-        except FileNotFoundError:
-            raise ValueError(f"File '{args.positions}' not found.")
-    else:
-        try:
-            positions = get_led_positions("led_positions.csv")
-            print("Detected led_positions.csv. Using it for LED positions.")
-        except FileNotFoundError:
-            positions = get_led_positions()
-            print("No LED positions file found. Using random positions.")
+    # Provide default file locations
+    filenames = [
+        os.path.join(os.getcwd(), "positions.csv"),
+        os.path.join(os.path.dirname(args.target), "positions.csv"),
+        os.path.join(os.path.dirname(sys.argv[0]), "positions.csv"),
+        os.path.join(os.getcwd(), "../data/positions.csv"),
+        os.path.join(os.path.dirname(args.target), "../data/positions.csv"),
+        os.path.join(os.path.dirname(sys.argv[0]), "../data/positions.csv"),
+    ]
 
-    print(f"Running: {cmd} at {datetime.datetime.now()}")
+    # Allow specifying custom path
+    if args.positions:
+        filenames = [args.positions]
+
+    # Try to load positions from various files
+    positions = get_positions(filenames)
+
+    print(f"Running {cmd} at {datetime.datetime.now()}.")
 
     with Popen(cmd, stdout=PIPE) as p:
         sim = Simulation(positions)
-        breader = NonBlockingBytesReader(p.stdout.read1) # type: ignore
+        breader = NonBlockingBytesReader(p.stdout.read1)  # type: ignore
         dr = DataReader(breader.start())  # type: ignore
         dr.update()
 

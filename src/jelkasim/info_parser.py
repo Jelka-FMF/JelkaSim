@@ -1,4 +1,6 @@
 import random
+import os
+import sys
 
 
 def random_tree(n=500, origin=(0, 0, 0), height=200, max_width=120, min_width=60):
@@ -14,15 +16,24 @@ def random_tree(n=500, origin=(0, 0, 0), height=200, max_width=120, min_width=60
             yield (x + origin[0], y + origin[1], origin[2] + h)
 
 
-def get_led_positions(file: "str | None" = None) -> "dict[int, tuple[float, float, float]]":
-    if file is None:
-        return {i: pos for i, pos in enumerate(random_tree())}
-    positions_cm = {}
-    with open(file) as f:
-        for line in f.readlines():
-            line = line.strip()
-            if line == "":
-                continue
-            i, x, y, z = line.split(",")
-            positions_cm[int(i)] = (float(x), float(y), float(z))
-    return positions_cm
+def get_positions(filenames: "list[str]") -> "dict[int, tuple[float, float, float]]":
+    for filename in filenames:
+        if not os.path.isfile(filename):
+            continue
+
+        with open(filename) as file:
+            print(f"Loading positions from '{filename}'.", file=sys.stderr, flush=True)
+
+            positions = {}
+
+            for line in file.readlines():
+                line = line.strip()
+                if line == "":
+                    continue
+                i, x, y, z = line.split(",")
+                positions[int(i)] = (float(x), float(y), float(z))
+
+            return positions
+
+    print("No valid file found to load positions from. Using random positions.", file=sys.stderr, flush=True)
+    return {i: pos for i, pos in enumerate(random_tree())}
