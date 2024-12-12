@@ -45,9 +45,9 @@ def main(header_wait: float = 0.5):
         os.path.join(os.getcwd(), "positions.csv"),
         os.path.join(os.path.dirname(args.target), "positions.csv"),
         os.path.join(os.path.dirname(sys.argv[0]), "positions.csv"),
-        os.path.join(os.getcwd(), "../data/positions.csv"),
-        os.path.join(os.path.dirname(args.target), "../data/positions.csv"),
-        os.path.join(os.path.dirname(sys.argv[0]), "../data/positions.csv"),
+        os.path.join(os.getcwd(), "../../data/positions.csv"),
+        os.path.join(os.path.dirname(args.target), "../../data/positions.csv"),
+        os.path.join(os.path.dirname(sys.argv[0]), "../../data/positions.csv"),
     ]
 
     # Allow specifying custom path
@@ -57,10 +57,13 @@ def main(header_wait: float = 0.5):
     # Try to load positions from various files
     positions = get_positions(filenames)
 
-    print(f"Running {cmd} at {datetime.datetime.now()}.")
+    print("Initializing the simulation window.")
+    sim = Simulation(positions)
+    sim.init()
 
+    print(f"Running {cmd} at {datetime.datetime.now()}.")
+    
     with Popen(cmd, stdout=PIPE) as p:
-        sim = Simulation(positions)
         breader = NonBlockingBytesReader(p.stdout.read1)  # type: ignore
         dr = DataReader(breader.start())  # type: ignore
         dr.update()
@@ -73,7 +76,6 @@ def main(header_wait: float = 0.5):
         if dr.header is None:
             raise ValueError(f"No header found in the first {header_wait} seconds. Is your program running?")
 
-        sim.init()
         while sim.running:
             c = next(dr)
             dr.user_print()
