@@ -22,7 +22,7 @@ def get_positions(filenames: "list[str]") -> "dict[int, tuple[float, float, floa
             continue
 
         with open(filename) as file:
-            print(f"Loading positions from '{filename}'.", file=sys.stderr, flush=True)
+            print(f"[SIMULATION] Loading positions from '{filename}'.", file=sys.stderr, flush=True)
 
             positions = {}
 
@@ -35,5 +35,5 @@ def get_positions(filenames: "list[str]") -> "dict[int, tuple[float, float, floa
 
             return positions
 
-    print("No valid file found to load positions from. Using random positions.", file=sys.stderr, flush=True)
+    print("[SIMULATION] No valid file found to load positions from. Using random positions.", file=sys.stderr, flush=True)
     return {i: pos for i, pos in enumerate(random_tree())}

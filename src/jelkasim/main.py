@@ -22,14 +22,19 @@ parser.add_argument(
 
 
 def main(header_wait: float = 0.5):
-    print(f"You are executing JelkaSim from '{os.getcwd()}' using Python '{sys.executable}'.")
+    print(
+        f"[SIMULATION] You are executing JelkaSim from '{os.getcwd()}' using Python '{sys.executable}'.",
+        file=sys.stderr,
+        flush=True,
+    )
+
     args = parser.parse_args()
 
     cmd = []
     if args.runner:
         if not args.target:
             # TODO: UI
-            raise ValueError("You must provide a target program.")
+            raise ValueError("[SIMULATION] You must provide a target program.")
     if args.target:
         if args.runner:
             cmd = [args.runner, args.target]
@@ -38,7 +43,7 @@ def main(header_wait: float = 0.5):
         else:
             cmd = [args.target]
     if cmd == []:
-        raise ValueError("You must provide a target program. (Wait for the next update.)")
+        raise ValueError("[SIMULATION] You must provide a target program. Wait for the next update.")
 
     # Provide default file locations
     filenames = [
@@ -57,12 +62,12 @@ def main(header_wait: float = 0.5):
     # Try to load positions from various files
     positions = get_positions(filenames)
 
-    print("Initializing the simulation window.")
+    print("[SIMULATION] Initializing the simulation window.", file=sys.stderr, flush=True)
     sim = Simulation(positions)
     sim.init()
 
-    print(f"Running {cmd} at {datetime.datetime.now()}.")
-    
+    print(f"[SIMULATION] Running {cmd} at {datetime.datetime.now()}.", file=sys.stderr, flush=True)
+
     with Popen(cmd, stdout=PIPE) as p:
         breader = NonBlockingBytesReader(p.stdout.read1)  # type: ignore
         dr = DataReader(breader.start())  # type: ignore
@@ -74,7 +79,7 @@ def main(header_wait: float = 0.5):
             time.sleep(0.01)
 
         if dr.header is None:
-            raise ValueError(f"No header found in the first {header_wait} seconds. Is your program running?")
+            raise ValueError(f"[SIMULATION] No header found in the first {header_wait} seconds. Is your program running?")
 
         while sim.running:
             c = next(dr)
@@ -84,4 +89,8 @@ def main(header_wait: float = 0.5):
         breader.close()
         sim.quit()
 
-    print(f"Finished running at {datetime.datetime.now()} (took {time.time() - t_start:.2f} seconds).")
+    print(
+        f"[SIMULATION] Finished running at {datetime.datetime.now()} (took {time.time() - t_start:.2f} seconds).",
+        file=sys.stderr,
+        flush=True,
+    )
