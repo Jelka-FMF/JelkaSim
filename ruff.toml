@@ -27,9 +27,10 @@ exclude = [
     "venv",
 ]
 
-# Support Python 3.10+.
-target-version = "py310"
+# Support Python 3.8+.
+target-version = "py38"
 
+# Set the line length and indentation width.
 line-length = 128
 indent-width = 4
 

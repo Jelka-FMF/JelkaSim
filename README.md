@@ -1,21 +1,50 @@
-# JelkaSim
-Simulation for jelka
+# Jelka Simulation
 
-# Building and publishing a package
-You can build the package by running the following command in the same directory as pyproject.toml:
-```sh
-python3 -m build
-```
-Output should be located in dist directory:
-```
-dist/
-├── jelka_validator-version-something.whl
-└── jelka_validator-version.tar.gz
-```
-To securely upload your project, you’ll need a PyPI API token. It can be created here for TestPyPI and here for PyPI.
+Simulation for running Jelka FMF patterns.
 
-Run Twine to upload all of the archives under dist:
+## Note
+
+If you want to contribute your own Jelka FMF patterns, you should check out the [Storži](https://github.com/Jelka-FMF/Storzi) repository for full instructions about developing and contributing patterns.
+
+## Installation
+
 ```sh
-python3 -m twine upload dist/*
+pip install jelkasim
 ```
-You will be prompted for a username and password. For the username, use token. For the password, use the token value, including the pypi- prefix.
+
+## Usage
+
+```
+usage: jelkasim [-h] [--positions POSITIONS] [runner] target
+
+Run Jelka FMF simulation.
+
+positional arguments:
+  runner                  How to run your program.
+  target                  Your program name.
+
+options:
+  -h, --help              Show this help message and exit.
+  --positions POSITIONS   File with LED positions. Leave empty for automatic detection or random.
+```
+
+Examples:
+
+```sh
+jelkasim moj_vzorec.py
+jelkasim moj_vzorec.exe
+jelkasim node moj_vzorec.js
+jelkasim ocaml moj_vzorec.ml
+```
+
+For OCaml inside Docker, something like this should be used (probably):
+
+```sh
+jelkasim docker exec container-name "ocaml moj_vzorec.ml"
+```
+
+You should also figure out the container name using:
+
+```sh
+docker ps
+```

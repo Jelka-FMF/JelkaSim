@@ -12,12 +12,12 @@ import argparse
 
 from jelka_validator import DataReader
 
-parser = argparse.ArgumentParser(description="Run jelka simulation.")
+parser = argparse.ArgumentParser(description="Run Jelka FMF simulation.")
 
 parser.add_argument("runner", type=str, nargs="?", help="How to run your program.")
 parser.add_argument("target", type=str, help="Your program name.")
 parser.add_argument(
-    "--positions", type=str, help="File with LED positions. (Leave empty for automatic detection or random.)", required=False
+    "--positions", type=str, help="File with LED positions. Leave empty for automatic detection or random.", required=False
 )
 
 
@@ -42,8 +42,8 @@ def main(header_wait: float = 0.5):
             cmd = [sys.executable, args.target]
         else:
             cmd = [args.target]
-    if cmd == []:
-        raise ValueError("[SIMULATION] You must provide a target program. Wait for the next update.")
+    if not cmd:
+        raise ValueError("[SIMULATION] You must provide a target program. Wait for the next update...")
 
     # Provide default file locations
     filenames = [
@@ -55,9 +55,12 @@ def main(header_wait: float = 0.5):
         os.path.join(os.path.dirname(sys.argv[0]), "../../data/positions.csv"),
     ]
 
-    # Allow specifying custom path
+    # Allow specifying a custom path
     if args.positions:
         filenames = [args.positions]
+
+    # Resolve relative paths to absolute paths
+    filenames = [os.path.abspath(filename) for filename in filenames]
 
     # Try to load positions from various files
     positions = get_positions(filenames)

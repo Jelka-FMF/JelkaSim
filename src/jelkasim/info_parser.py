@@ -35,5 +35,11 @@ def get_positions(filenames: "list[str]") -> "dict[int, tuple[float, float, floa
 
             return positions
 
-    print("[SIMULATION] No valid file found to load positions from. Using random positions.", file=sys.stderr, flush=True)
+    print(
+        f"[SIMULATION] No valid file found to load positions from (attempted: {filenames}). Using random positions.",
+        file=sys.stderr,
+        flush=True,
+    )
+
+    # Return random positions if no file is found
     return {i: pos for i, pos in enumerate(random_tree())}

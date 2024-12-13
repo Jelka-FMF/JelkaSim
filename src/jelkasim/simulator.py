@@ -44,14 +44,14 @@ class Simulation:
 
     def set_colors(self, colors):
         if not self.running:
-            raise InterruptedError("Simulation stopped.")
+            raise InterruptedError("[SIMULATION] Simulation has stopped.")
         try:
             for i, c in colors.items():
                 assert all(isinstance(c[i], int) for i in range(3))
                 assert all(0 <= c[i] <= 255 for i in range(3))
         except AssertionError:
             self.running = False
-            raise ValueError(f"Wrong shape for color: ({i}: {c})") from None  # type: ignore
+            raise ValueError(f"[SIMULATION] Wrong shape for color ({i}: {c}).") from None  # type: ignore
         self.colors = {pk: tuple(color) for pk, color in colors.items()}
 
     def init(self):
