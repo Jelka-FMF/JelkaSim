@@ -1,18 +1,28 @@
-from numpy import array, cos, sin, random
+import math
+import random
 
 
-def proj(point, cam):
-    dy = point[1][0] - cam[1]
-    if dy != 0:
-        return ((point[0][0] - cam[0]) / dy, (point[2][0] - cam[2]) / dy, dy)
-    else:
-        return (0, 0, 1)
+class Matrix(list):
+    def __matmul__(self, other):
+        return Matrix(
+            [
+                [sum([self[i][m] * other[m][j] for m in range(len(self[0]))]) for j in range(len(other[0]))]
+                for i in range(len(self))
+            ]
+        )
 
+    def proj(self, cam):
+        dy = self[1][0] - cam[1]
+        if dy != 0:
+            return ((self[0][0] - cam[0]) / dy, (self[2][0] - cam[2]) / dy, dy)
+        else:
+            return (0, 0, 1)
 
-def rotation(phi, tau):
-    xy = array([[cos(phi), -sin(phi), 0], [sin(phi), cos(phi), 0], [0, 0, 1]])
-    yz = array([[1, 0, 0], [0, cos(tau), -sin(tau)], [0, sin(tau), cos(tau)]])
-    return yz @ xy
+    @staticmethod
+    def rotation(phi, tau):
+        xy = Matrix([[math.cos(phi), -math.sin(phi), 0], [math.sin(phi), math.cos(phi), 0], [0, 0, 1]])
+        yz = Matrix([[1, 0, 0], [0, math.cos(tau), -math.sin(tau)], [0, math.sin(tau), math.cos(tau)]])
+        return yz @ xy
 
 
 def draw_lucka(pygame, lucka, screen, size, color, scale):
@@ -36,7 +46,7 @@ class Simulation:
         self.phi, self.tau = 0, 0
 
         self.smreka = smreka.copy()
-        self.points = {i: array([[p[0]], [p[1]], [p[2]]]) for i, p in self.smreka.items()}
+        self.points = {i: Matrix([[p[0]], [p[1]], [p[2]]]) for i, p in self.smreka.items()}
         self.colors = {i: (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for i in self.smreka}
 
         self.scale = 1
@@ -91,9 +101,9 @@ class Simulation:
 
         self.screen.fill("black")
 
-        r = rotation(self.phi, self.tau)
+        r = Matrix.rotation(self.phi, self.tau)
         prev = None
-        projected = {i: proj(r @ p, self.camera) for i, p in self.points.items()}
+        projected = {i: (r @ p).proj(self.camera) for i, p in self.points.items()}
 
         for _, p in sorted(projected.items()):
             if p[2] > 0 and prev and prev[2] > 0:
@@ -104,7 +114,7 @@ class Simulation:
             c = self.colors.get(i, (0, 0, 0))
             draw_lucka(pygame, (p[0], p[1]), self.screen, max(20 / p[2], 1), c, self.scale)
 
-        p = proj(r @ array([[0], [0], [0]]), self.camera)
+        p = (r @ Matrix([[0], [0], [0]])).proj(self.camera)
         draw_lucka(pygame, (p[0], p[1]), self.screen, max(20 / p[2], 1), (0, 255, 0), self.scale)
         pygame.display.flip()
         self.clock.tick(60)  # limits FPS to 60
