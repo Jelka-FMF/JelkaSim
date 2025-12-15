@@ -1,5 +1,5 @@
 from .simulator import Simulation
-from .info_parser import get_positions
+from .info_parser import get_positions_and_filename
 from .read_non_blocking import NonBlockingBytesReader
 
 from subprocess import Popen, PIPE
@@ -63,7 +63,12 @@ def main(header_wait: float = 0.5):
     filenames = [os.path.abspath(filename) for filename in filenames]
 
     # Try to load positions from various files
-    positions = get_positions(filenames)
+    positions, filename = get_positions_and_filename(filenames)
+
+    # Set environment variables for the target program
+    environment = os.environ.copy()
+    if filename:
+        environment["JELKA_POSITIONS"] = filename
 
     print("[SIMULATION] Initializing the simulation window.", file=sys.stderr, flush=True)
     sim = Simulation(positions)
@@ -71,7 +76,7 @@ def main(header_wait: float = 0.5):
 
     print(f"[SIMULATION] Running {cmd} at {datetime.datetime.now()}.", file=sys.stderr, flush=True)
 
-    with Popen(cmd, stdout=PIPE) as p:
+    with Popen(cmd, env=environment, stdout=PIPE) as p:
         breader = NonBlockingBytesReader(p.stdout.read1)  # type: ignore
         dr = DataReader(breader.start())  # type: ignore
         dr.update()
