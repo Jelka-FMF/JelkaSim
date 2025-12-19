@@ -14,9 +14,18 @@ from jelka_validator import DataReader
 
 parser = argparse.ArgumentParser(description="Run Jelka FMF simulation.")
 
-parser.add_argument("run", type=str, nargs="+", help="How to run your program.")
 parser.add_argument(
-    "--positions", type=str, help="File with LED positions. Leave empty for automatic detection or random.", required=False
+    "run",
+    type=str,
+    nargs="+",
+    help="how to run the program",
+)
+
+parser.add_argument(
+    "--positions",
+    type=str,
+    help="specify the file with LED positions, leave empty for automatic detection or random",
+    required=False,
 )
 
 
@@ -32,13 +41,13 @@ def main(header_wait: float = 0.5):
     cmd = []
     target = None
     if len(args.run) == 1 and args.run[0].endswith(".py"):
-        # Python file is a special case: run it using the same python that is running this script.
-        # Python interpreter can be changed by putting it in front of the program name.
-        target = args.run[0]
+        # Python file is a special case: run it using the same python that is running this script
+        # Python interpreter can be changed by putting it in front of the program name
         cmd = [sys.executable, target]
+        target = args.run[0]
     else:
         cmd = args.run
-        target = args.run[-1]  # guess with this
+        target = args.run[-1]  # Guess with this
 
     # Allow specifying a custom path
     if args.positions:
@@ -63,10 +72,6 @@ def main(header_wait: float = 0.5):
     environment = os.environ.copy()
     if filename:
         environment["JELKA_POSITIONS"] = filename
-    print(cmd)
-
-    print("[SIMULATION] Initializing the simulation window.", file=sys.stderr, flush=True)
-    sim = Simulation(positions)
 
     print(f"[SIMULATION] Running {cmd} at {datetime.datetime.now()}.", file=sys.stderr, flush=True)
 
@@ -81,14 +86,23 @@ def main(header_wait: float = 0.5):
             time.sleep(0.01)
 
         if dr.header is None:
-            raise ValueError(f"[SIMULATION] No header found in the first {header_wait} seconds. Is your program running?")
+            print(
+                f"[SIMULATION] No header found in the first {header_wait} seconds. Is your program running?",
+                file=sys.stderr,
+                flush=True,
+            )
+            sys.exit(1)
 
+        print("[SIMULATION] Initializing the simulation window.", file=sys.stderr, flush=True)
+        sim = Simulation(positions)
         sim.init()
+
         while sim.running:
             c = next(dr)
             dr.user_print()
             sim.set_colors(dict(zip(range(len(c)), c)))
             sim.frame()
+
         breader.close()
         sim.quit()
 
