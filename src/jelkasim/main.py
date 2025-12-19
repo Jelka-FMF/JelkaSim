@@ -14,7 +14,7 @@ from jelka_validator import DataReader
 
 parser = argparse.ArgumentParser(description="Run Jelka FMF simulation.")
 
-parser.add_argument("runner", type=str, nargs="*", help="How to run your program.")
+parser.add_argument("run", type=str, nargs="+", help="How to run your program.")
 parser.add_argument(
     "--positions", type=str, help="File with LED positions. Leave empty for automatic detection or random.", required=False
 )
@@ -31,19 +31,16 @@ def main(header_wait: float = 0.5):
 
     cmd = []
     target = None
-    if args.runner:
-        if not args.target:
-            # TODO: UI
-            raise ValueError("[SIMULATION] You must provide a target program.")
-    if args.target:
-        if args.runner:
-            cmd = [args.runner, args.target]
-        elif args.target.endswith(".py"):
-            cmd = [sys.executable, args.target]
-        else:
-            cmd = [args.target]
-    if not cmd:
-        raise ValueError("[SIMULATION] You must provide a target program. Wait for the next update...")
+    if len(args.run) == 1 and args.run[0].endswith(".py"):
+        # Python file is a special case: run it using the same python that is running this script.
+        # Python interpreter can be changed by putting it in front of the program name.
+        target = args.run[0]
+        cmd = [sys.executable, target]
+    else:
+        cmd = args.run
+        target = args.run[-1]  # guess with this
+
+    print(sys.argv[0])
 
     # Provide default file locations
     filenames = [
