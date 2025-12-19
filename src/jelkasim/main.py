@@ -14,8 +14,7 @@ from jelka_validator import DataReader
 
 parser = argparse.ArgumentParser(description="Run Jelka FMF simulation.")
 
-parser.add_argument("runner", type=str, nargs="?", help="How to run your program.")
-parser.add_argument("target", type=str, help="Your program name.")
+parser.add_argument("runner", type=str, nargs="*", help="How to run your program.")
 parser.add_argument(
     "--positions", type=str, help="File with LED positions. Leave empty for automatic detection or random.", required=False
 )
@@ -31,6 +30,7 @@ def main(header_wait: float = 0.5):
     args = parser.parse_args()
 
     cmd = []
+    target = None
     if args.runner:
         if not args.target:
             # TODO: UI
@@ -48,10 +48,8 @@ def main(header_wait: float = 0.5):
     # Provide default file locations
     filenames = [
         os.path.join(os.getcwd(), "positions.csv"),
-        os.path.join(os.path.dirname(args.target), "positions.csv"),
         os.path.join(os.path.dirname(sys.argv[0]), "positions.csv"),
         os.path.join(os.getcwd(), "../../data/positions.csv"),
-        os.path.join(os.path.dirname(args.target), "../../data/positions.csv"),
         os.path.join(os.path.dirname(sys.argv[0]), "../../data/positions.csv"),
     ]
 
