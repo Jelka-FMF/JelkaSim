@@ -29,4 +29,4 @@ let rec loop duration = (
 ;;
 
 print_string "#{\"version\":0, \"led_count\":500, \"fps\":60}\n";
-loop 5400
+loop (60 * 180)

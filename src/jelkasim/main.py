@@ -67,7 +67,6 @@ def main(header_wait: float = 0.5):
 
     print("[SIMULATION] Initializing the simulation window.", file=sys.stderr, flush=True)
     sim = Simulation(positions)
-    sim.init()
 
     print(f"[SIMULATION] Running {cmd} at {datetime.datetime.now()}.", file=sys.stderr, flush=True)
 
@@ -84,6 +83,7 @@ def main(header_wait: float = 0.5):
         if dr.header is None:
             raise ValueError(f"[SIMULATION] No header found in the first {header_wait} seconds. Is your program running?")
 
+        sim.init()
         while sim.running:
             c = next(dr)
             dr.user_print()
