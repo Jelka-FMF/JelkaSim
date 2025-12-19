@@ -40,19 +40,18 @@ def main(header_wait: float = 0.5):
         cmd = args.run
         target = args.run[-1]  # guess with this
 
-    print(sys.argv[0])
-
-    # Provide default file locations
-    filenames = [
-        os.path.join(os.getcwd(), "positions.csv"),
-        os.path.join(os.path.dirname(sys.argv[0]), "positions.csv"),
-        os.path.join(os.getcwd(), "../../data/positions.csv"),
-        os.path.join(os.path.dirname(sys.argv[0]), "../../data/positions.csv"),
-    ]
-
     # Allow specifying a custom path
     if args.positions:
         filenames = [args.positions]
+    else:
+        # Provide default file locations
+        filenames = [
+            os.path.join(os.getcwd(), "positions.csv"),
+            os.path.join(os.getcwd(), "../../data/positions.csv"),
+        ]
+        if os.path.dirname(target):
+            filenames.append(os.path.join(os.path.dirname(target), "positions.csv"))
+            filenames.append(os.path.join(os.path.dirname(target), "../../data/positions.csv"))
 
     # Resolve relative paths to absolute paths
     filenames = [os.path.abspath(filename) for filename in filenames]
@@ -64,6 +63,7 @@ def main(header_wait: float = 0.5):
     environment = os.environ.copy()
     if filename:
         environment["JELKA_POSITIONS"] = filename
+    print(cmd)
 
     print("[SIMULATION] Initializing the simulation window.", file=sys.stderr, flush=True)
     sim = Simulation(positions)

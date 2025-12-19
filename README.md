@@ -15,17 +15,17 @@ pip install jelkasim
 ## Usage
 
 ```
-usage: jelkasim [-h] [--positions POSITIONS] [runner] target
+usage: jelkasim.exe [-h] [--positions POSITIONS] run [run ...]
 
 Run Jelka FMF simulation.
 
 positional arguments:
-  runner                  How to run your program.
-  target                  Your program name.
+  run                   How to run your program.
 
 options:
-  -h, --help              Show this help message and exit.
-  --positions POSITIONS   File with LED positions. Leave empty for automatic detection or random.
+  -h, --help            show this help message and exit
+  --positions POSITIONS
+                        File with LED positions. Leave empty for automatic detection or random.
 ```
 
 Examples:
