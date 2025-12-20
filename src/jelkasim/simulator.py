@@ -41,14 +41,20 @@ def draw_line(pygame, p1, p2, screen, color, scale):
 
 
 class Simulation:
-    def __init__(self, smreka) -> None:
+    def __init__(self, smreka, auto_scale=True) -> None:
         self.running = True
         self.phi, self.tau = 0, 0
 
         self.smreka = smreka.copy()
-        self.points = {i: Matrix([[p[0]], [p[1]], [p[2]]]) for i, p in self.smreka.items()}
+        if auto_scale:
+            zs = [z for (_, (_, _, z)) in self.smreka.items()]
+            k = 200 / (max(zs) - min(zs))
+            self.points = {i: Matrix([[k * p[0]], [k * p[1]], [k * p[2]]]) for i, p in self.smreka.items()}
+        else:
+            self.points = {i: Matrix([[p[0]], [p[1]], [p[2]]]) for i, p in self.smreka.items()}
         self.colors = {i: (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for i in self.smreka}
 
+        
         self.scale = 1
         self.camera = (0, -500, 100)
 
