@@ -38,16 +38,14 @@ def main(header_wait: float = 0.5):
 
     args = parser.parse_args()
 
-    cmd = []
-    target = None
     if len(args.run) == 1 and args.run[0].endswith(".py"):
         # Python file is a special case: run it using the same python that is running this script
         # Python interpreter can be changed by putting it in front of the program name
-        cmd = [sys.executable, target]
         target = args.run[0]
+        cmd = [sys.executable, target]
     else:
-        cmd = args.run
         target = args.run[-1]  # Guess with this
+        cmd = args.run
 
     # Allow specifying a custom path
     if args.positions:

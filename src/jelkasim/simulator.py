@@ -54,7 +54,6 @@ class Simulation:
             self.points = {i: Matrix([[p[0]], [p[1]], [p[2]]]) for i, p in self.smreka.items()}
         self.colors = {i: (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for i in self.smreka}
 
-        
         self.scale = 1
         self.camera = (0, -500, 100)
 
