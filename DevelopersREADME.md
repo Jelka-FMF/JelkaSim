@@ -1,6 +1,12 @@
 # Information for Developers
 
-## Publishing to PyPI
+## Publishing to PyPI Automatically
+
+The project uses GitHub Actions to automatically publish new releases to PyPI. To trigger a release, create a new Git tag with the version number (e.g., `v1.0.0`) and push it to the repository.
+
+**Important:** Make sure to set the correct version number in `pyproject.toml` before creating the tag.
+
+## Publishing to PyPI Locally
 
 You can build the package by running the following command in the same directory as `pyproject.toml`:
 
